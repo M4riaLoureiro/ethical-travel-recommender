@@ -1,0 +1,16 @@
+services:
+  db:
+    image: postgres:13
+    container_name: llm_final_project_postgres
+    environment:
+      POSTGRES_DB: vector_db
+      POSTGRES_USER: user
+      POSTGRES_PASSWORD: password
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+
+
+volumes:
+  postgres_data:

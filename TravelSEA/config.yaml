@@ -1,0 +1,23 @@
+# config.yaml
+
+database:
+  name: "vector_db"
+  host: "localhost"
+  password: "password"
+  username: "marialoureiro"
+  port: 5432
+  table_name: "southeast_asia_countries"
+
+processing:
+  chunk_size: 500
+  chunk_overlap: 100
+  data_directory: "../data/"
+  embedding_model_name: "BAAI/bge-large-en-v1.5"
+
+llm:
+  openai_model: "gpt-4o"
+  temperature: 0.7
+
+embedding_model:
+  model_name: "BAAI/bge-large-en-v1.5"
+  embed_dim: 1024
