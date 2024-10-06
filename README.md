@@ -24,7 +24,9 @@ This repository contains the code and resources for developing a Retrieval-Augme
 
 ## Problem Statement
 
-In today’s travel industry, there is a growing demand for personalized and sustainable travel recommendations. This project introduces a RAG-based system that delivers contextually relevant, environmentally conscious travel suggestions specifically for Southeast Asian countries. While similar systems have been developed for major European cities, Southeast Asia, as one of the most popular holiday destinations globally, faces unique challenges. With fewer protective laws and regulations, these countries are more vulnerable to the harmful impacts of mass tourism compared to their European counterparts. As a result, this project focuses on this region, which is particularly susceptible to the effects of climate change and overtourism.
+In today’s travel industry, there is a growing demand for personalized and sustainable travel recommendations. This project introduces a RAG-based system that delivers contextually relevant, environmentally conscious travel suggestions specifically for Southeast Asian countries. While similar systems have been developed for major European cities, Southeast Asia, as one of the most popular holiday destinations globally, faces unique challenges.
+
+With fewer protective laws and regulations, these countries are more vulnerable to the harmful impacts of mass tourism compared to their European counterparts. As a result, this project focuses on this region, which is particularly susceptible to the effects of climate change and overtourism.
 
 ### Key Features:
 - **Customized Trip Plans:** Generates personalized travel itineraries based on user preferences, such as budget, travel style, and duration.
