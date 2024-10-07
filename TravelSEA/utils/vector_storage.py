@@ -43,7 +43,7 @@ class PGVectorDB:
             [], storage_context=self.storage_context
         )
 
-    def add_document(self, document: dict):
+    def add_document(self, document):
 
         llama_node = TextNode(
             text=document["content"],

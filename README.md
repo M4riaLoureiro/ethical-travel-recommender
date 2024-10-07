@@ -103,6 +103,8 @@ Our system provides two interfaces:
 1. REST API (FastAPI)
 2. Web UI (Streamlit)
 
+![Interface Example
+](image.png)
 ### Ingestion Pipeline
 0 points: No ingestion
 1 point: Semi-automated ingestion of the dataset into the knowledge base, e.g., with a Jupyter notebook
@@ -112,19 +114,11 @@ Our system provides two interfaces:
 - Automated ETL Process with text cleaning, chunking, embedding and indexing to the vector store:
 
 ### Monitoring
-0 points: No monitoring
-1 point: User feedback is collected OR there's a monitoring dashboard
-2 points: User feedback is collected and there's a dashboard with at least 5 charts
-[📊 Dashboard Documentation](monitoring/README.md)
 
-- Real-time metrics dashboard (Grafana)
-- Key metrics:
-  - Response latency
-  - User satisfaction scores
-  - Query patterns
-  - System health
+User feedback is collected with interactive buttons and the feedback is saved in a json file.
 
 ### Containerization
+
 0 points: No containerization
 1 point: Dockerfile is provided for the main application OR there's a docker-compose for the dependencies only
 2 points: Everything is in docker-compose
@@ -145,12 +139,8 @@ You can find all of the instructions on how to run the code in the [Getting Star
 The pdf files exported from WikiVoyage can be found in the /data folder. For the processing of these pdf files, we have used marker-pdf, a library that requires some heavy gpu processing, so you can also find in the /data folder a pickle file with the pdf documents already preprocessed (docs_processed.pickle).
 
 ### Best practices
- Hybrid search: combining both text and vector search (at least evaluating it) (1 point)
- Document re-ranking (1 point)
- User query rewriting (1 point)
-### Bonus points (not covered in the course)
- Deployment to the cloud (2 points)
- Up to 3 extra bonus points if you want to award for something extra (write in feedback for what)
+
+Hybrid search has been implemented to combine both text and vector search together, improving the retrieval system accuracy.
 
 ## Repository Structure
 

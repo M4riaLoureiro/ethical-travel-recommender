@@ -5,7 +5,7 @@ Streamlit application for TravelSEA Advisor that provides travel recommendations
 using RAG (Retrieval Augmented Generation) with vector storage and LLM.
 
 Usage:
-    streamlit run app.py -- --config config.yaml
+    streamlit run TravelSEA_app.py -- --config config.yaml
 """
 
 import argparse
@@ -18,33 +18,87 @@ from langchain_openai import ChatOpenAI
 from llama_index.embeddings.huggingface import HuggingFaceEmbedding
 import os
 from dotenv import load_dotenv
+from pydantic import BaseModel
 
 # Load environment variables from .env file
 load_dotenv()
 
 
+class AppConfig(BaseModel):
+    class Config:
+        arbitrary_types_allowed = True
+
+    class Database(BaseModel):
+        name: str
+        host: str
+        password: str
+        username: str
+        port: int
+        table_name: str
+
+    class EmbeddingModel(BaseModel):
+        embed_model_name: str
+        embed_dim: int
+
+    class LLM(BaseModel):
+        openai_model: str
+        temperature: float
+
+    database: Database
+    embedding_model: EmbeddingModel
+    llm: LLM
+
+
 def load_config(config_path):
     """Load configuration from YAML file."""
     with open(config_path, "r") as f:
-        config = yaml.safe_load(f)
-    return config
+        config_dict = yaml.safe_load(f)
+    return AppConfig(**config_dict)
+
+
+import os
+import json
+
+
+def save_dict_to_json(file_path, new_data):
+    # Check if the file exists
+    if os.path.exists(file_path):
+        # Load the existing data
+        with open(file_path, "r") as file:
+            try:
+                data = json.load(file)
+                # Ensure data is a list (to handle multiple dictionaries)
+                if not isinstance(data, list):
+                    data = [data]
+            except json.JSONDecodeError:
+                # If file is empty or contains invalid JSON, start with an empty list
+                data = []
+    else:
+        # If file doesn't exist, start with an empty list
+        data = []
+
+    # Append the new dictionary to the list
+    data.append(new_data)
+
+    # Save the updated list back to the file
+    with open(file_path, "w") as file:
+        json.dump(data, file, indent=4)
 
 
 def initialize_vector_db_engine(db_config, embedding_config):
     """Initialize connection to vector database."""
-
     vectordb = PGVectorDB(
-        db_config["name"],
-        db_config["host"],
-        db_config["password"],
-        db_config["username"],
-        db_config["port"],
-        db_config["table_name"],
-        embed_dim=embedding_config["embed_dim"],
+        db_config.name,
+        db_config.host,
+        db_config.password,
+        db_config.username,
+        db_config.port,
+        db_config.table_name,
+        embed_dim=embedding_config.embed_dim,
     )
 
     llama_embedding_model = HuggingFaceEmbedding(
-        model_name=(embedding_config["model_name"])
+        model_name=embedding_config.embed_model_name
     )
 
     vectordb.build_index(llama_embedding_model)
@@ -56,7 +110,7 @@ def initialize_vector_db_engine(db_config, embedding_config):
     return query_engine
 
 
-def get_rag_response(query, query_engine, llm):
+def get_rag_response(query: str, query_engine, llm) -> str:
     """
     Get response using RAG:
     1. Retrieve relevant documents
@@ -67,26 +121,28 @@ def get_rag_response(query, query_engine, llm):
     relevant_docs = query_engine.query(query)
 
     context = []
-    for doc in relevant_docs:
-        for source in doc.source_nodes:
-            context.append(source.text)
+    for doc in relevant_docs.source_nodes:
+        context.append(doc.text)
+
+    context = "\n\n".join([doc for doc in context])
 
     # Create prompt with context
-    prompt = f"""You are a helpful travel assistant for Southeast Asia. 
-    Use the following pieces of information to answer the user's question.
-    If you don't know the answer based on the provided context, say so.
-    
-    Context:
-    {' '.join([text for text in context])}
-    
-    Question: {query}
-    
-    Answer:"""
+    prompt_template = """You are TravelSEA Advisor, an AI travel assistant specialized in sustainable tourism in Southeast Asia. 
+        Use the following context to answer the question. If you cannot find the answer in the context, 
+        say so politely and suggest what information might be helpful to better answer the question.
+        
+        Context: {context}
+        
+        Question: {query}
+        
+        Answer: """
+
+    prompt = prompt_template.format(context=context, query=query)
 
     # Get LLM response
     response = llm.predict(prompt)
 
-    return response, relevant_docs
+    return response
 
 
 def main():
@@ -104,7 +160,7 @@ def main():
         config = load_config(config_path)
 
     # Set page config
-    st.set_page_config(page_title="TravelSEA Advisor", page_icon="🌏", layout="wide")
+    st.set_page_config(page_title="🌏 TravelSEA Advisor", page_icon="🌏", layout="wide")
 
     openai_api_key = os.getenv("OPENAI_API_KEY")
     if not openai_api_key:
@@ -114,15 +170,12 @@ def main():
         st.stop()
 
     # Initialize components
-    print(config["embedding_model"])
-    query_engine = initialize_vector_db_engine(
-        config["database"], config["embedding_model"]
-    )
+    query_engine = initialize_vector_db_engine(config.database, config.embedding_model)
 
     llm = ChatOpenAI(
         api_key=openai_api_key,
-        model=config["llm"]["openai_model"],
-        temperature=config["llm"]["temperature"],
+        model=config.llm.openai_model,
+        temperature=config.llm.temperature,
     )
 
     # Application header
@@ -148,24 +201,33 @@ def main():
         placeholder="e.g., What are the must-visit temples in Cambodia?",
     )
 
+    json_feedback_path = "../feedback.json"
     # Add a button to submit the question
-    if st.button("Get Answer"):
+    if st.button("Get Recommendations"):
         if user_question:
             try:
-                with st.spinner("Searching for information..."):
-                    response, relevant_docs = get_rag_response(
-                        user_question, query_engine, llm
-                    )
+                with st.spinner("Generating recommendations..."):
+                    response = get_rag_response(user_question, query_engine, llm)
 
                 # Display the response
-                st.markdown("### Answer")
+                st.markdown("### 📝 Recommendations")
                 st.write(response)
 
-                # Optionally show relevant sources
-                with st.expander("View Sources"):
-                    for i, doc in enumerate(relevant_docs, 1):
-                        st.markdown(f"**Source {i}:**")
-                        st.markdown(doc.text)
+                answer_dic = {"question": user_question, "answer": response}
+                # Add feedback buttons
+                col1, col2, _ = st.columns([1, 1, 3])
+                with col1:
+                    if st.button("👍 Helpful"):
+                        answer_dic["feedback"] = "helpful"
+                        save_dict_to_json(json_feedback_path, answer_dic)
+                        st.success("Thank you for your feedback!")
+                with col2:
+                    if st.button("👎 Not Helpful"):
+                        answer_dic["feedback"] = "not helpful"
+                        save_dict_to_json(json_feedback_path, answer_dic)
+                        st.info(
+                            "Thank you for your feedback! We'll work on improving our responses."
+                        )
 
             except Exception as e:
                 st.error(f"An error occurred: {str(e)}")
@@ -176,13 +238,15 @@ def main():
     st.markdown("---")
     st.markdown(
         """
-    ### About this project
+    #### About TravelSEA Advisor
     TravelSEA Advisor uses advanced AI technology to provide accurate and relevant travel information 
     about Southeast Asian countries. The recommendations are based on curated content from reliable 
     travel sources, with a focus on sustainable and responsible tourism.
     
     The application uses RAG (Retrieval Augmented Generation) to ensure responses are grounded in 
     factual information about the region.
+    
+    For more information about the project, visit our [GitHub repository](https://github.com/M4riaLoureiro/ethical-travel-recommender).
     """
     )
 
