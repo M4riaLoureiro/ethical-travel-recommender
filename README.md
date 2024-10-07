@@ -4,19 +4,22 @@ This repository contains the code and resources for developing a Retrieval-Augme
 
 
 ## Table of Contents
+
 - [Problem Statement](#problem-statement)
   - [Key Features](#key-features)
   - [Data Sources](#data-source)
-- [Repository Structure](#repository-structure)
-- [Evaluation Criteria Milestones](#evaluation-criteria-milestones)
-  - [RAG Implementation](#rag-implementation)
+- [Evaluation Criteria Milestones](#evaluation-criteria-milestones) (hopefully a helper for project reviewers)
+  - [Problem Definition](#problem-definition)
+  - [RAG Flow](#rag-flow)
   - [Retrieval Evaluation](#retrieval-evaluation)
   - [RAG Evaluation](#rag-evaluation)
-- [Interface](#interface)
-- [Data Pipeline](#data-pipeline)
-  - [Ingestion Flow](#ingestion-flow)
+  - [Interface](#interface)
+  - [Ingestion Pipeline](#ingestion-pipeline)
   - [Monitoring](#monitoring)
-- [Container Setup](#container-setup)
+  - [Containerization](#containerization)
+  - [Reproducibility](#reproducibility)
+  - [Best Practices](#best-practices)
+- [Repository Structure](#repository-structure)
 - [Getting Started](#getting-started)
   - [Prerequisites](#prerequisites)
   - [Installation](#installation)
@@ -45,17 +48,6 @@ These pages provide a good starting point for travel-related information. We ack
 - Verified sustainability metrics from environmental organizations
 - User-generated content with proper review mechanisms
 
-## Repository Structure
-
-```plaintext
-├── data                        # Scripts for data collection and pre-processing
-├── ethical_travel_recommender  # Source code for the RAG system
-├── notebooks                   # Jupyter notebooks for exploratory data analysis and prototyping
-├── utils                       # Utility scripts for common tasks
-├── docker                      # Docker files for containerization
-├── requirements.txt            # Dependencies required to run the project
-└── README.md                   # This README file
-```
 
 ## Evaluation Criteria Milestones
 
@@ -147,9 +139,10 @@ open http://localhost:8501
 ```
 
 ### Reproducibility
-0 points: No instructions on how to run the code, the data is missing, or it's unclear how to access it
-1 point: Some instructions are provided but are incomplete, OR instructions are clear and complete, the code works, but the data is missing
-2 points: Instructions are clear, the dataset is accessible, it's easy to run the code, and it works. The versions for all dependencies are specified.
+
+You can find all of the instructions on how to run the code in the [Getting Started](#getting-started) Section.
+
+The pdf files exported from WikiVoyage can be found in the /data folder. For the processing of these pdf files, we have used marker-pdf, a library that requires some heavy gpu processing, so you can also find in the /data folder a pickle file with the pdf documents already preprocessed (docs_processed.pickle).
 
 ### Best practices
  Hybrid search: combining both text and vector search (at least evaluating it) (1 point)
@@ -159,7 +152,18 @@ open http://localhost:8501
  Deployment to the cloud (2 points)
  Up to 3 extra bonus points if you want to award for something extra (write in feedback for what)
 
- 
+## Repository Structure
+
+```plaintext
+├── data                        # Scripts for data collection and pre-processing
+├── ethical_travel_recommender  # Source code for the RAG system
+├── notebooks                   # Jupyter notebooks for exploratory data analysis and prototyping
+├── utils                       # Utility scripts for common tasks
+├── docker                      # Docker files for containerization
+├── requirements.txt            # Dependencies required to run the project
+└── README.md                   # This README file
+```
+
 ## Getting Started
 
 ### Prerequisites
@@ -183,8 +187,3 @@ cp .env.example .env
 # Run the application
 docker-compose up
 ```
-
-## Best Practices Implemented
-- Hybrid Search Implementation: [📝 Documentation](docs/hybrid_search.md)
-- Query Rewriting: [🔄 Implementation](notebooks/query_rewriting.ipynb)
-- Document Reranking: [📊 Analysis](notebooks/reranking.md)
