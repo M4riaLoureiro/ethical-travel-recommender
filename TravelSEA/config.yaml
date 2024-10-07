@@ -1,12 +1,12 @@
 # config.yaml
 
 database:
-  name: "vector_db"
-  host: "localhost"
-  password: "password"
-  username: "marialoureiro"
+  name: vector_db
+  host: postgres
+  password: password
+  username: marialoureiro
   port: 5432
-  table_name: "southeast_asia_countries"
+  table_name: southeast_asia_countries
 
 processing:
   chunk_size: 500

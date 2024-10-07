@@ -1,16 +1,27 @@
 services:
-  db:
+  postgres:
     image: postgres:13
-    container_name: llm_final_project_postgres
+    container_name: ethical_travel_recommender_postgres
     environment:
       POSTGRES_DB: vector_db
-      POSTGRES_USER: user
+      POSTGRES_USER: marialoureiro
       POSTGRES_PASSWORD: password
     ports:
       - "5432:5432"
     volumes:
       - postgres_data:/var/lib/postgresql/data
 
+  streamlit:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: ethical_travel_recommender_streamlit
+    environment:
+      - OPENAI_API_KEY=${OPENAI_API_KEY}
+    ports:
+      - "8501:8501"
+    depends_on:
+      - postgres
 
 volumes:
   postgres_data:
