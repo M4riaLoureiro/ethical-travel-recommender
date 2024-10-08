@@ -88,6 +88,7 @@ In the end, the chosen retrieval system was pgvector (data and discussion of the
 
 
 ### RAG Evaluation
+Notebook: [📈 RAG Evaluation](notebooks/04_rag_experiments.ipynb)
 
 Different RAG systems were tested, varying the complexity of the prompt given to the llm model. Please check [04_rag_experiments](notebooks/04_rag_experiments.ipynb) for more details.
 
