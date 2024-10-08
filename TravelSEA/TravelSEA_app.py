@@ -19,6 +19,7 @@ from llama_index.embeddings.huggingface import HuggingFaceEmbedding
 import os
 from dotenv import load_dotenv
 from pydantic import BaseModel
+import json
 
 # Load environment variables from .env file
 load_dotenv()
@@ -54,11 +55,6 @@ def load_config(config_path):
     with open(config_path, "r") as f:
         config_dict = yaml.safe_load(f)
     return AppConfig(**config_dict)
-
-
-import os
-import json
-
 
 def save_dict_to_json(file_path, new_data):
     # Check if the file exists

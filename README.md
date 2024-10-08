@@ -2,11 +2,13 @@
 
 This repository contains the code and resources for developing a Retrieval-Augmented Generation (RAG) system that provides trip plans and tourism recommendations for Southeast Asian countries. The focus is on promoting sustainable and ethical travel practices, leveraging data from WikiVoyage and sustainability-related content.
 
+![Interface Example](static/example1.png)
 
 ## Table of Contents
 
 - [Problem Statement](#problem-statement)
   - [Key Features](#key-features)
+  - [Related Work](#related-work)
   - [Data Sources](#data-source)
 - [Evaluation Criteria Milestones](#evaluation-criteria-milestones) (hopefully a helper for project reviewers)
   - [Problem Definition](#problem-definition)
@@ -36,13 +38,16 @@ With fewer protective laws and regulations, these countries are more vulnerable 
 - **Sustainability Recommendations:** Highlights eco-friendly accommodations, local experiences, and sustainable travel tips to encourage responsible tourism.
 - **Focus on Southeast Asia:** Specializes in recommendations for countries such as Thailand, Vietnam, Cambodia, Malaysia, Indonesia, and more.
 
+### Related work:
+- [Green Destination Recommender: A Web Application to
+Encourage Responsible City Trip Recommendations](https://dl.acm.org/doi/pdf/10.1145/3631700.3664909)
 
 ### Data Sources
 Currently, our knowledge base is built using data from Wikivoyage:
 - **[WikiVoyage](https://en.wikivoyage.org/)**: A community-driven travel guide with comprehensive information on destinations, attractions, and travel tips.
 - **Sustainability Pages on WikiVoyage**: Sections focused on sustainable tourism, including eco-friendly accommodations, ethical travel practices, and green transportation options.
 
-These pages provide a good starting point for travel-related information. We acknowledge that this is a prototype version, and future iterations of the project could incorporate:
+These pages provide a good starting point for travel-related information. Considering this is a prototype version, future iterations of the project could incorporate:
 - Real-time data from verified travel sources
 - Curated content from local tourism boards
 - Verified sustainability metrics from environmental organizations
@@ -58,12 +63,12 @@ The problem is explain in the top of this readme file with references to previou
 ### RAG Flow
 Notebook: [📊 RAG Flow Implementation](notebooks/04_rag_experiments.ipynb)
 
-RAG experiments notebooks includs the implementation of a knowledge base and an LLM that together compose the RAG system.
+RAG experiments notebooks includes the implementation of a knowledge base and an LLM that together compose the RAG system.
 
 ### Retrieval Evaluation
 Notebook: [📈 Retrieval Analysis](notebooks/03_evaluate_retrieval_options.ipynb)
 
-We conducted a comprehensive comparison of different retrieval approaches:
+A comprehensive comparison of different retrieval approaches was conducted:
 
 1. MinSearch:
    - [MinSearch](https://github.com/alexeygrigorev/minsearch) is a minimal vector similarity search implementation by Alexey Grigorev
@@ -84,74 +89,89 @@ In the end, the chosen retrieval system was pgvector (data and discussion of the
 
 
 ### RAG Evaluation
-0 points: No evaluation of RAG is provided
-1 point: Only one RAG approach (e.g., one prompt) is evaluated
-2 points: Multiple RAG approaches are evaluated, and the best one is used
-Notebook: [🎯 RAG Performance Analysis](notebooks/rag_evaluation.ipynb)
-- Prompt engineering experiments
-- Answer relevance assessment
-- Factual accuracy verification
-- Human evaluation results
+
+Different RAG systems were tested, varying the complexity of the prompt given to the llm model. Please check [04_rag_experiments](notebooks/04_rag_experiments.ipynb) for more details.
 
 ### Interface
-0 points: No way to interact with the application at all
-1 point: Command line interface, a script, or a Jupyter notebook
-2 points: UI (e.g., Streamlit), web application (e.g., Django), or an API (e.g., built with FastAPI)
-[💻 API Documentation](docs/api.md)
 
-Our system provides two interfaces:
-1. REST API (FastAPI)
-2. Web UI (Streamlit)
+A Streamlit UI was developed to improve user interaction with the application. Example usages of this web app:
 
-![Interface Example
-](image.png)
+![Interface Example 1](static/example1.png)
+
+![Interface Example 2](static/example2.png)
+
 ### Ingestion Pipeline
-0 points: No ingestion
-1 point: Semi-automated ingestion of the dataset into the knowledge base, e.g., with a Jupyter notebook
-2 points: Automated ingestion with a Python script or a special tool (e.g., Mage, dlt, Airflow, Prefect)
+
 - Data Sources: Wikivoyage content for Southeast Asian countries
 - ETL Pipeline development: [Process PDF Documents Notebook](notebooks/01_process_pdf_documents.ipynb) 
-- Automated ETL Process with text cleaning, chunking, embedding and indexing to the vector store:
+- Automated ETL Process with text cleaning, chunking, embedding and indexing to the vector store: [Process and Index Documents](TravelSEA/utils/process_and_index_documents.py)
 
 ### Monitoring
 
-User feedback is collected with interactive buttons and the feedback is saved in a json file.
+User feedback is collected with interactive buttons and the feedback is saved in a json file:
+
+![Feedback Example 1](static/feedbackexample.png)
 
 ### Containerization
 
-0 points: No containerization
-1 point: Dockerfile is provided for the main application OR there's a docker-compose for the dependencies only
-2 points: Everything is in docker-compose
-[🐳 Container Documentation](docker/README.md)
+In the final main branch, the Postgres DB is hosted on an independent Docker container. Please check [docker-compose](TravelSEA/docker-compose.yaml) for more details.
 
-```bash
-# Start all services
-docker-compose up -d
-
-# Access the UI
-open http://localhost:8501
-```
+In the branch **full_containerization** you can find the code to run the full contanerized application, however, there was a small bug in the connection between the streamlit app and the database that I wasn't able to fix.
 
 ### Reproducibility
 
 You can find all of the instructions on how to run the code in the [Getting Started](#getting-started) Section.
 
-The pdf files exported from WikiVoyage can be found in the /data folder. For the processing of these pdf files, we have used marker-pdf, a library that requires some heavy gpu processing, so you can also find in the /data folder a pickle file with the pdf documents already preprocessed (docs_processed.pickle).
+The pdf files exported from WikiVoyage can be found in the /data folder. For the processing of these pdf files, marker-pdf has been used, a library that requires some heavy gpu processing, so you can also find in the /data folder a pickle file with the pdf documents already preprocessed (docs_processed.pickle).
 
 ### Best practices
 
-Hybrid search has been implemented to combine both text and vector search together, improving the retrieval system accuracy.
+Hybrid search has been implemented to combine both text and vector search together, improving the retrieval system accuracy. Please check [vector storage class](TravelSEA/utils/vector_storage.py) for more details.
 
 ## Repository Structure
 
-```plaintext
-├── data                        # Scripts for data collection and pre-processing
-├── ethical_travel_recommender  # Source code for the RAG system
-├── notebooks                   # Jupyter notebooks for exploratory data analysis and prototyping
-├── utils                       # Utility scripts for common tasks
-├── docker                      # Docker files for containerization
-├── requirements.txt            # Dependencies required to run the project
-└── README.md                   # This README file
+```
+ethical-travel-recommender/
+
+├── README.md                     # This readme file
+├── requirements.txt              # Dependencies required for the project
+│
+├── TravelSEA/                    # Main application folder
+│   ├── docker-compose.yaml       # Docker setup for containerizing the application
+│   ├── TravelSEA_app.py          # Main application file, responsible for running the recommender system
+│   ├── config.yaml               # Configuration file with application settings
+│   ├── prep.py                   # Script for initial preparation of data and resources
+│   └── utils/                    # Utility scripts for document processing and vector storage
+│       ├── init.py           # Init file for utils package
+│       ├── process_and_index_documents.py  # Script to process and index travel documents
+│       ├── vector_storage.py     # Utility for handling vector storage and retrieval
+│
+├── static/                       # Folder containing static resources (e.g., images)
+│   ├── example1.png              # Example image of UI
+│   ├── example2.png              # Another example image of UI
+│
+├── data/                         # Folder containing travel documents and processed data
+│   ├── Brunei.pdf                # Travel document for Brunei
+│   ├── Cambodia.pdf              # Travel document for Cambodia
+│   ├── docs_processed.pickle     # Pickle file containing processed documents
+│   ├── GT_docs_gpt-4o.bin        # Ground truth data processed by GPT-4
+│   ├── GT_docs_parsed_gpt-4o.bin # Parsed ground truth documents
+│   ├── Indonesia.pdf             # Travel document for Indonesia
+│   ├── Laos.pdf                  # Travel document for Laos
+│   ├── Malaysia.pdf              # Travel document for Malaysia
+│   ├── Myanmar.pdf               # Travel document for Myanmar
+│   ├── Philippines.pdf           # Travel document for the Philippines
+│   ├── Responsible_travel.pdf    # Document on responsible travel
+│   ├── Singapore.pdf             # Travel document for Singapore
+│   ├── Sustainable_travel.pdf    # Document on sustainable travel
+│   ├── Thailand.pdf              # Travel document for Thailand
+│   ├── Vietnam.pdf               # Travel document for Vietnam
+│
+├── notebooks/                    # Jupyter notebooks for experiments and data processing
+│   ├── 01_process_pdf_documents.ipynb       # Notebook for processing PDF travel documents
+│   ├── 02_generate_ground_truth.ipynb       # Notebook for generating ground truth data
+│   ├── 03_evaluate_retrieval_options.ipynb  # Notebook for evaluating retrieval models
+│   ├── 04_rag_experiments.ipynb             # Notebook for running RAG (retrieval-augmented generation) experiments
 ```
 
 ## Getting Started
@@ -165,15 +185,19 @@ Hybrid search has been implemented to combine both text and vector search togeth
 ### Installation
 ```bash
 # Clone the repository
-git clone https://github.com/yourusername/travelsea-advisor.git
+git clone https://github.com/M4riaLoureiro/ethical-travel-recommender.git
 
 # Install dependencies
 pip install -r requirements.txt
 
-# Set up environment variables
-cp .env.example .env
-# Edit .env with your API keys
+# Set up environment variables: HF_TOKEN and OPENAI_API_KEY
 
-# Run the application
+# Run docker compose:
 docker-compose up
+
+# Run the preparation file
+python prep.py
+
+# Run the streamlit app
+streamlit run TravelSEA_app.py -- --config config.yaml
 ```
