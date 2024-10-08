@@ -25,7 +25,6 @@ This repository contains the code and resources for developing a Retrieval-Augme
 - [Getting Started](#getting-started)
   - [Prerequisites](#prerequisites)
   - [Installation](#installation)
-- [Best Practices Implemented](#best-practices-implemented)
 
 ## Problem Statement
 
