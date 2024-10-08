@@ -2,7 +2,7 @@
 
 This repository contains the code and resources for developing a Retrieval-Augmented Generation (RAG) system that provides trip plans and tourism recommendations for Southeast Asian countries. The focus is on promoting sustainable and ethical travel practices, leveraging data from WikiVoyage and sustainability-related content.
 
-![Interface Example](static/example1.png)
+![Interface Example](static/ui_example.png)
 
 ## Table of Contents
 
